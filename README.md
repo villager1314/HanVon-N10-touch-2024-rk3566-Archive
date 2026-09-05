@@ -2,7 +2,7 @@
 
 本仓库记录汉王 N10 Touch 2024 电纸书的设备识别、Android 启动链、Recovery/Fastboot/Loader 模式、分区备份、Magisk Root、蓝牙故障和墨水屏应用刷新策略研究。
 
-内容以实机观察、ADB 输出、升级包和离线分析为依据。仓库不会公开设备唯一数据、用户数据、原厂 APK、完整固件或分区镜像。
+内容以实机观察、ADB 输出、升级包和离线分析为依据。仓库不会公开设备唯一数据、用户数据、原厂 APK 或完整固件。为便于同型号、同固件设备恢复，GitHub Release 可单独提供最小必要镜像包；这些第三方二进制不适用本仓库的 MIT License。
 
 > [!WARNING]
 > RK3566 只是 SoC 型号，不代表不同设备的 Loader、U-Boot、Trust、DTB、屏幕波形或分区布局可以混用。写错 `uboot`、`trust`、`waveform`、`dtbo`、`vbmeta` 或 `super` 可能造成黑屏、无法显示、数据丢失甚至需要拆机进入 Maskrom。任何写入前都应备份原分区并校验 SHA-256。
@@ -72,6 +72,12 @@ Secure boot - yes
 菜单包含 `Reboot system now`、`Enter fastboot`、`Reboot to bootloader` 等项目，但实机上通过按键或菜单进入 Fastboot 并不稳定，不能把普通安卓设备的“音量上/下”映射直接套到翻页键。
 
 Rockchip Loader 是这次可靠的底层恢复路径。设备已处于 Loader 时，不需要也不应随意加载其他板级的通用 Loader。RKDevTool v2.96 在手工编辑下载行时曾闪退，后改用新版工具完成单分区写入。
+
+实机照片和入口说明见 [`docs/boot-modes.md`](docs/boot-modes.md)。已确认的三条路径是：
+
+- 返回键 + 电源键：出现“没有指令（No command）”；
+- `adb reboot fastboot`：进入 Android Fastboot（fastbootd）菜单；
+- fastbootd 中选择 `Reboot to bootloader`：实际回到 Android Recovery 菜单，而不是可稳定使用的传统 U-Boot fastboot。
 
 ### 4. Magisk Root
 
@@ -178,10 +184,14 @@ refresh_mode = 13
 - `tools/fdt_remove_props.py`：研究过程中编写的 FDT 属性移除脚本，仅供离线研究；
 - `NOTICE.md`：第三方材料和固件许可说明。
 
+## Release 镜像包
+
+Release 中的最小恢复/Root 包仅面向与本仓库记录完全匹配的 N10 Touch 2024 固件，包含原厂 boot、已验证的 Magisk 30.7 boot 和原厂 recovery。刷写前必须核对 [`checksums/README.md`](checksums/README.md)；不要用于其他 RK3566 设备。
+
 ## 不包含的内容
 
 - 原厂完整固件、OTA 包、APK 和动态分区镜像；
-- Magisk 修补后的 boot 镜像；
+- 已知会循环重启的实验 boot 镜像；
 - 从实机提取的分区镜像、数据库和日志原件；
 - `userdata`、账号、序列号、MAC、密钥及其他设备唯一信息；
 - 反编译生成的第三方源代码。
@@ -189,4 +199,3 @@ refresh_mode = 13
 ## 许可
 
 本仓库作者原创的文档和脚本采用 [MIT License](LICENSE)。设备固件、Android、Magisk、Rockchip 工具、JADX、驱动、APK、字体、商标以及其他第三方材料仍受各自许可证和权利声明约束，不因本仓库记录研究结果或哈希而获得重新授权。详见 [NOTICE.md](NOTICE.md)。
-
