@@ -1,0 +1,35 @@
+# Firmware and partition images
+*.img
+*.bin
+*.zip
+*.7z
+*.rar
+*.dat
+*.br
+
+# Android packages and extracted proprietary code
+*.apk
+*.apex
+decoded/
+decompiled/
+
+# Device data and logs
+*.db
+*.db-journal
+*.log
+bugreport-*
+device-backup/
+
+# Keys and identity material
+*.pem
+*.key
+*.keystore
+adb_keys*
+
+# Work directories
+work/
+outputs/
+.idea/
+.vscode/
+__pycache__/
+
