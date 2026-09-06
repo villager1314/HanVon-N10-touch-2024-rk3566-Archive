@@ -20,11 +20,11 @@ adb reboot fastboot
 
 ![adb reboot fastboot 进入 fastbootd](images/fastbootd-adb-reboot-fastboot-redacted.jpg)
 
-## fastbootd 的 `Reboot to bootloader`
+## fastbootd 的 `Enter Recovery`
 
-在上述 fastbootd 菜单中选择 `Reboot to bootloader` 后，实机显示 Android Recovery 菜单。这个结果说明该菜单项没有提供一个已验证可用的传统 fastboot 刷写界面。
+在上述 fastbootd 菜单中选择 `Enter Recovery` 后，实机显示 Android Recovery 菜单。这个结果说明该菜单项没有提供一个已验证可用的传统 fastboot 刷写界面。
 
 ![fastbootd 选择 Reboot to bootloader 后的 Android Recovery](images/android-recovery-from-fastboot-bootloader.jpg)
 
 > [!NOTE]
-> 本设备显示的 “Any button cycles highlight / Long-press activates” 表示任意可识别按键短按移动、长按确认。翻页键不能未经验证就等同于标准 Android 设备的 Volume Up/Down。
+> 本设备显示的 “Any button cycles highlight / Long-press activates” 表示任意可识别按键短按移动、长按确认。翻页键不等同于标准 Android 设备的 Volume Up/Down。
