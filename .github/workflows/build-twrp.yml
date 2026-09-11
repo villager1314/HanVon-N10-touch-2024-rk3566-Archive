@@ -58,14 +58,13 @@ jobs:
         run: |
           cd twrp-src
           export ALLOW_MISSING_DEPENDENCIES=true
-          export USE_CCACHE=1
-          export CCACHE_EXEC=/usr/bin/ccache
-          export CCACHE_DIR="$GITHUB_WORKSPACE/.ccache"
-          mkdir -p "$CCACHE_DIR"
-          ccache -M 4G
+          # The hosted runner's default ccache directory is mounted read-only
+          # during this Android build. Disable ccache instead of allowing the
+          # compiler wrapper to fall back to /home/runner/.cache/ccache.
+          unset USE_CCACHE CCACHE_EXEC CCACHE_DIR
           source build/envsetup.sh
           lunch twrp_rk3566_eink-eng
-          mka recoveryimage -j4
+          mka recoveryimage -j2
 
       - name: Repack with verified stock components
         run: |
