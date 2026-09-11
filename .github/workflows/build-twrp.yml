@@ -66,6 +66,21 @@ jobs:
           lunch twrp_rk3566_eink-eng
           mka recoveryimage -j2
 
+      - name: Summarize build failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "::group::Concise Android build failure"
+          if [ -f twrp-src/out/error.log ]; then
+            grep -nE 'FAILED:|error:|ninja:|Killed|exit status|Process completed' \
+              twrp-src/out/error.log | tail -n 120 || true
+            echo "--- final 200 lines of out/error.log ---"
+            tail -n 200 twrp-src/out/error.log
+          else
+            echo "out/error.log was not generated"
+          fi
+          echo "::endgroup::"
+
       - name: Repack with verified stock components
         run: |
           python3 twrp/tools/repack_stock_components.py \
