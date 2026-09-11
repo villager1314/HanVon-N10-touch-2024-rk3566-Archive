@@ -1,0 +1,15 @@
+# Hanvon N10 Touch 2024: A-only dynamic partitions.
+/system      ext4  system                        flags=display="System";backup=1;logical
+/vendor      ext4  vendor                        flags=display="Vendor";backup=1;logical
+/odm         ext4  odm                           flags=display="ODM";backup=1;logical
+/product     ext4  product                       flags=display="Product";backup=1;logical
+/system_ext  ext4  system_ext                    flags=display="System Ext";backup=1;logical
+/metadata    ext4  /dev/block/by-name/metadata   flags=display="Metadata";backup=1
+/cache       ext4  /dev/block/by-name/cache      flags=display="Cache";backup=1
+/data        f2fs  /dev/block/by-name/userdata   flags=display="Data";backup=1;storage;settingsstorage
+/boot        emmc  /dev/block/by-name/boot       flags=display="Boot";backup=1;flashimg=1
+/recovery    emmc  /dev/block/by-name/recovery   flags=display="Recovery";backup=1;flashimg=1
+/dtbo        emmc  /dev/block/by-name/dtbo       flags=display="DTBO";backup=1;flashimg=1
+/vbmeta      emmc  /dev/block/by-name/vbmeta     flags=display="VBMeta";backup=1;flashimg=1
+/external_sd auto  /dev/block/mmcblk0p1 /dev/block/mmcblk0 flags=display="MicroSD";storage;removable
+/usb-otg     auto  /dev/block/sda1 /dev/block/sda         flags=display="USB OTG";storage;removable

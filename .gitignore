@@ -1,6 +1,7 @@
 # Firmware and partition images
 *.img
 *.bin
+!twrp/device/hanvon/rk3566_eink/prebuilt/header-v2.bin
 *.zip
 *.7z
 *.rar
@@ -32,4 +33,3 @@ outputs/
 .idea/
 .vscode/
 __pycache__/
-

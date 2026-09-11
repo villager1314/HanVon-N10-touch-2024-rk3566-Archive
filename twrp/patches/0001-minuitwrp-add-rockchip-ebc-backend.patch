@@ -1,0 +1,49 @@
+diff --git a/minuitwrp/Android.bp b/minuitwrp/Android.bp
+index a000000..b000000 100644
+--- a/minuitwrp/Android.bp
++++ b/minuitwrp/Android.bp
+@@ -31,6 +31,7 @@ cc_library_shared {
+     ],
+     srcs: [
+         "graphics.cpp",
++        "graphics_ebc.cpp",
+         "graphics_fbdev.cpp",
+         "resources.cpp",
+         "truetype.cpp",
+diff --git a/minuitwrp/graphics.h b/minuitwrp/graphics.h
+index a000000..b000000 100644
+--- a/minuitwrp/graphics.h
++++ b/minuitwrp/graphics.h
+@@ -34,6 +34,7 @@ struct minui_backend {
+     void (*exit)(minui_backend*);
+ };
+
++minui_backend* open_ebc();
+ minui_backend* open_fbdev();
+ minui_backend* open_adf();
+ minui_backend* open_drm();
+diff --git a/minuitwrp/graphics.cpp b/minuitwrp/graphics.cpp
+index a000000..b000000 100644
+--- a/minuitwrp/graphics.cpp
++++ b/minuitwrp/graphics.cpp
+@@ -366,6 +366,18 @@ int gr_init(void)
+     property_get("persist.twrp.rotation", gr_rotation_string, default_rotation);
+     gr_rotation = atoi(gr_rotation_string);
+     if (!(gr_rotation == 90 || gr_rotation == 180 || gr_rotation == 270))
+         gr_rotation = 0;
++
++    // Rockchip's E-Ink panel is not presented as a normal framebuffer. Try
++    // its character-device backend first; Init() returns null on other devices.
++    gr_backend = open_ebc();
++    if (gr_backend) {
++        gr_draw = gr_backend->init(gr_backend);
++        if (!gr_draw) {
++            gr_backend->exit(gr_backend);
++        } else {
++            printf("Using Rockchip EBC graphics.\n");
++        }
++    }
+
+ #ifdef MSM_BSP
+     gr_backend = open_overlay();
+     if (gr_backend) {

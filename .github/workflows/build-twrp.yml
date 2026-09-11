@@ -1,0 +1,89 @@
+name: Build experimental TWRP
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 330
+
+    steps:
+      - name: Checkout device repository
+        uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup
+          sudo apt-get clean
+          df -h /
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib \
+            git git-lfs gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev \
+            lib32z1-dev libelf-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev \
+            libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools \
+            xsltproc zip zlib1g-dev
+
+      - name: Install repo tool
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo -o "$HOME/bin/repo"
+          chmod +x "$HOME/bin/repo"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Sync minimal TWRP 12.1 sources
+        run: |
+          mkdir twrp-src
+          cd twrp-src
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+          repo sync -c --force-sync --no-clone-bundle --no-tags -j4
+          df -h /
+
+      - name: Install Hanvon device tree and E-Ink backend
+        run: |
+          cp -a twrp/device/hanvon twrp-src/device/
+          cp twrp/patches/graphics_ebc.cpp twrp-src/bootable/recovery/minuitwrp/
+          git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0001-minuitwrp-add-rockchip-ebc-backend.patch"
+          test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/kernel
+          test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/dtb
+
+      - name: Build recovery
+        shell: bash
+        run: |
+          cd twrp-src
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export USE_CCACHE=1
+          export CCACHE_EXEC=/usr/bin/ccache
+          ccache -M 4G
+          source build/envsetup.sh
+          lunch twrp_rk3566_eink-eng
+          mka recoveryimage -j4
+
+      - name: Repack with verified stock components
+        run: |
+          python3 twrp/tools/repack_stock_components.py \
+            twrp-src/out/target/product/rk3566_eink/recovery.img \
+            twrp/device/hanvon/rk3566_eink/prebuilt \
+            artifacts/recovery-hanvon-rk3566-eink-experimental.img
+          sha256sum artifacts/recovery-hanvon-rk3566-eink-experimental.img | tee artifacts/SHA256SUMS
+          libminui="$(find twrp-src/out/target/product/rk3566_eink -name libminuitwrp.so -print -quit)"
+          test -n "$libminui"
+          grep -a -q '/dev/ebc' "$libminui"
+
+      - name: Upload experimental image and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hanvon-rk3566-eink-twrp-${{ github.run_number }}
+          path: |
+            artifacts/
+            twrp-src/out/error.log
+            twrp-src/out/verbose.log.gz
+          if-no-files-found: warn
+          retention-days: 14
