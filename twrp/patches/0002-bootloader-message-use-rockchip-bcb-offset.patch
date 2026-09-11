@@ -1,18 +1,29 @@
 diff --git a/bootloader_message/include/bootloader_message/bootloader_message.h b/bootloader_message/include/bootloader_message/bootloader_message.h
-index 6d25a1f..5eabc13 100644
+index 6d25a1f..48f782c 100644
 --- a/bootloader_message/include/bootloader_message/bootloader_message.h
 +++ b/bootloader_message/include/bootloader_message/bootloader_message.h
-@@ -26,7 +26,12 @@
+@@ -29,8 +29,21 @@
  // 32K - 64K    System space, used for miscellanious AOSP features. See below.
  // Note that these offsets are admitted by bootloader,recovery and uncrypt, so they
  // are not configurable without changing all of them.
 -constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 0;
-+//
-+// Hanvon rk3566_eink uses the legacy Rockchip misc layout. Both its stock
-+// U-Boot and stock recovery read the bootloader_message at byte offset 0x4000
-+// (sector offset 32), rather than the AOSP offset 0. Keep TWRP on the same BCB
-+// location so reboot commands are consumed and cleared instead of looping.
 +constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 16 * 1024;
  constexpr size_t VENDOR_SPACE_OFFSET_IN_MISC = 2 * 1024;
- constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024;
- constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024;
+-constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024;
+-constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024;
++//
++// Hanvon rk3566_eink uses Rockchip's legacy BOARD_RECOVERY_BLDRMSG_OFFSET
++// layout. Its stock U-Boot and recovery exchange the 2-KiB BCB at byte
++// offset 0x4000 (sector 32), rather than at AOSP offset 0. Rockchip's TWRP
++// fork places wipe_package 16 KiB after that configured BCB offset. Keep the
++// newer AOSP system-space region after wipe_package as well, so no two TWRP
++// users of misc overlap.
++//
++// Stock Android components are not assumed to consume either of the latter
++// two regions on this A-only device; the important bootloader ABI is the BCB
++// at 0x4000.
++constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC =
++    BOOTLOADER_MESSAGE_OFFSET_IN_MISC + 16 * 1024;
++constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC =
++    WIPE_PACKAGE_OFFSET_IN_MISC + 16 * 1024;
+ constexpr size_t SYSTEM_SPACE_SIZE_IN_MISC = 32 * 1024;

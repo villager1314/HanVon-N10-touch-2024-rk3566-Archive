@@ -53,6 +53,10 @@ jobs:
           git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0002-bootloader-message-use-rockchip-bcb-offset.patch"
           grep -q 'BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 16 \* 1024' \
             twrp-src/bootable/recovery/bootloader_message/include/bootloader_message/bootloader_message.h
+          grep -q 'BOOTLOADER_MESSAGE_OFFSET_IN_MISC + 16 \* 1024' \
+            twrp-src/bootable/recovery/bootloader_message/include/bootloader_message/bootloader_message.h
+          grep -q 'WIPE_PACKAGE_OFFSET_IN_MISC + 16 \* 1024' \
+            twrp-src/bootable/recovery/bootloader_message/include/bootloader_message/bootloader_message.h
           test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/kernel
           test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/dtb
 

@@ -13,10 +13,13 @@ flash test.
 The stock Rockchip boot chain stores its bootloader control block at byte
 offset `0x4000` in `misc`, instead of the AOSP offset `0`. The build applies a
 device-specific `bootloader_message` patch so TWRP reads and clears the same
-BCB location. This prevents a persistent `boot-recovery` command from sending
-every subsequent reboot back to recovery. The device is A-only; Android A/B
-wipe-package handling is outside the supported scope of this experimental
-recovery.
+BCB location. Following Rockchip's `BOOTLOADER_MESSAGE_OFFSET` layout, TWRP's
+wipe-package and AOSP system-space regions are moved to `0x8000` and `0xC000`,
+respectively, so they do not overlap the relocated BCB. This prevents a
+persistent `boot-recovery` command from sending every subsequent reboot back
+to recovery without introducing a second TWRP writer at `0x4000`. The device
+is A-only; wipe-package and Virtual A/B handling remain outside the supported
+scope of this experimental recovery.
 
 The E-Ink backend targets the ABI observed in firmware 1.00.84:
 
