@@ -50,6 +50,9 @@ jobs:
           cp -a twrp/device/hanvon twrp-src/device/
           cp twrp/patches/graphics_ebc.cpp twrp-src/bootable/recovery/minuitwrp/
           git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0001-minuitwrp-add-rockchip-ebc-backend.patch"
+          git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0002-bootloader-message-use-rockchip-bcb-offset.patch"
+          grep -q 'BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 16 \* 1024' \
+            twrp-src/bootable/recovery/bootloader_message/include/bootloader_message/bootloader_message.h
           test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/kernel
           test -f twrp-src/device/hanvon/rk3566_eink/prebuilt/dtb
 
