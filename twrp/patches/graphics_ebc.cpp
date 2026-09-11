@@ -164,12 +164,7 @@ void Exit(minui_backend*) {
     }
 }
 
-minui_backend backend = {
-    .init = Init,
-    .flip = Flip,
-    .blank = Blank,
-    .exit = Exit,
-};
+minui_backend backend = { Init, Flip, Blank, Exit };
 
 }  // namespace
 

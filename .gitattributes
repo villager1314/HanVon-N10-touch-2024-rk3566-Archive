@@ -5,4 +5,5 @@ twrp/**/*.py text eol=lf
 twrp/**/*.mk text eol=lf
 twrp/**/recovery.fstab text eol=lf
 twrp/**/prop.default text eol=lf
+twrp/**/*.rc text eol=lf
 twrp/**/prebuilt/* binary
