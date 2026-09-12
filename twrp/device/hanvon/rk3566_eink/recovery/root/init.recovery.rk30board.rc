@@ -10,6 +10,13 @@ on fs && property:sys.usb.configfs=1
     write /config/usb_gadget/g1/configs/b.1/MaxPower 500
     symlink /config/usb_gadget/g1/configs/b.1 /config/usb_gadget/g1/os_desc/b.1
 
+# Stock recovery leaves USB disabled until sideload is selected. TWRP needs a
+# normal ADB transport, so reset any inherited gadget state after configfs has
+# been initialized and then request the standard ADB function.
+on boot
+    setprop sys.usb.config none
+    setprop sys.usb.config adb
+
 # Always start console on userdebug and eng builds.
 on fs && property:ro.debuggable=1
     start console
