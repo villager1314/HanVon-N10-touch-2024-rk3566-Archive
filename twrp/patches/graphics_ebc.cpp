@@ -29,7 +29,7 @@ constexpr unsigned long EBC_GET_BUFFER = 0x7000;
 constexpr unsigned long EBC_SEND_BUFFER = 0x7001;
 constexpr unsigned long EBC_GET_BUFFER_INFO = 0x7002;
 constexpr unsigned long EBC_GET_BUF_FORMAT = 0x7010;
-constexpr int EPD_PART_GC16 = 7;
+constexpr int EPD_A2_DITHER = 13;
 constexpr size_t EBC_MAPPING_SIZE = 0x01400000;
 
 struct ebc_buf_info {
@@ -137,7 +137,7 @@ GRSurface* Flip(minui_backend*) {
         }
     }
 
-    update.epd_mode = EPD_PART_GC16;
+    update.epd_mode = EPD_A2_DITHER;
     update.win_x1 = 0;
     update.win_y1 = 0;
     update.win_x2 = update.width;
