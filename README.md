@@ -1,5 +1,14 @@
 # Hanvon N10 Touch 2024 / RK3566 研究记录
 
+> [!CAUTION]
+> **请勿直接刷入本仓库中的实验性 TWRP，也不要把其他 RK3566 设备的 Recovery 刷到本机。**
+>
+> 目前的 TWRP 仍处于真机适配阶段。已知测试版本曾出现 ADB 不可用、触摸坐标错位、重启后再次进入 Recovery，以及停留在“N10 Touch”开机画面等问题。特别是使用墨水屏刷新模式 13 的构建已经确认无法正常启动，请勿刷入或传播为“可用版本”。
+>
+> GitHub Actions 显示构建成功，只代表镜像能够编译和打包，**不代表已经通过真机验证**。除非 Release 明确标注“已验证”，否则所有生成的 Recovery 镜像都应视为开发测试产物。
+>
+> 测试前必须确认设备能够进入 Rockchip Loader 模式，并准备与本机固件版本匹配的原厂 Recovery 备份。不要写入 `uboot`、`trust`、`waveform`、`dtbo`、`vbmeta`、`super` 或 `userdata`。出现异常时应优先通过 Loader 仅恢复 `recovery` 分区，切勿使用“擦除所有”。
+
 本仓库记录汉王 N10 Touch 2024 电纸书的设备识别、Android 启动链、Recovery/Fastboot/Loader 模式、分区备份、Magisk Root、蓝牙故障和墨水屏应用刷新策略研究。
 
 内容以实机观察、ADB 输出、升级包和离线分析为依据。仓库不会公开设备唯一数据、用户数据、原厂 APK 或完整固件。为便于同型号、同固件设备恢复，GitHub Release 可单独提供最小必要镜像包；这些第三方二进制不适用本仓库的 MIT License。
@@ -199,3 +208,4 @@ Release 中的最小恢复/Root 包仅面向与本仓库记录完全匹配的 N1
 ## 许可
 
 本仓库作者原创的文档和脚本采用 [MIT License](LICENSE)。设备固件、Android、Magisk、Rockchip 工具、JADX、驱动、APK、字体、商标以及其他第三方材料仍受各自许可证和权利声明约束，不因本仓库记录研究结果或哈希而获得重新授权。详见 [NOTICE.md](NOTICE.md)。
+
