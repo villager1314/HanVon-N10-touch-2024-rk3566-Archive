@@ -1,0 +1,24 @@
+diff --git a/twrp.cpp b/twrp.cpp
+index 42c8293c..3229ae8c 100755
+--- a/twrp.cpp
++++ b/twrp.cpp
+@@ -410,6 +410,11 @@ int main(int argc, char** argv) {
+ 
+ 	// Load default values to set DataManager constants and handle ifdefs
+ 	DataManager::SetDefaultValues();
++	// Clear a one-shot recovery request before graphics initialization.  The
++	// Rockchip E-Ink backend can block during its first update; clearing the BCB
++	// here preserves an escape path to Android even if the UI never appears.
++	TWFunc::Clear_Bootloader_Message();
++
+ 	printf("Starting the UI...\n");
+ 	gui_init();
+ 
+@@ -419,7 +424,6 @@ int main(int argc, char** argv) {
+ 	startupArgs startup;
+ 	startup.parse(&argc, &argv);
+ 	twrpAdbBuFifo *adb_bu_fifo = new twrpAdbBuFifo();
+-	TWFunc::Clear_Bootloader_Message();
+ 
+ 	if (startup.Get_Fastboot_Mode()) {
+ 		process_fastbootd_mode();

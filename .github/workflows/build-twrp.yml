@@ -50,6 +50,15 @@ jobs:
           cp -a twrp/device/hanvon twrp-src/device/
           cp twrp/patches/graphics_ebc.cpp twrp-src/bootable/recovery/minuitwrp/
           git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0001-minuitwrp-add-rockchip-ebc-backend.patch"
+          git -C twrp-src/bootable/recovery apply "$GITHUB_WORKSPACE/twrp/patches/0002-clear-bcb-before-ui.patch"
+          grep -q 'constexpr int EPD_PART_GC16 = 7;' \
+            twrp-src/bootable/recovery/minuitwrp/graphics_ebc.cpp
+          test "$(grep -n 'TWFunc::Clear_Bootloader_Message' twrp-src/bootable/recovery/twrp.cpp | cut -d: -f1)" \
+            -lt "$(grep -n 'gui_init();' twrp-src/bootable/recovery/twrp.cpp | cut -d: -f1)"
+          grep -q 'sys.usb.controller "fcc00000.dwc3"' \
+            twrp-src/device/hanvon/rk3566_eink/recovery/root/init.recovery.rk30board.rc
+          grep -q 'on property:sys.usb.config=adb && property:sys.usb.ffs.ready=1 && property:sys.usb.configfs=1' \
+            twrp-src/bootable/recovery/etc/init.rc
           grep -q 'BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 0' \
             twrp-src/bootable/recovery/bootloader_message/include/bootloader_message/bootloader_message.h
           grep -q 'WIPE_PACKAGE_OFFSET_IN_MISC = 16 \* 1024' \

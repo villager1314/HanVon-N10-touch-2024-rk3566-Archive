@@ -5,10 +5,20 @@ Hanvon N10 Touch 2024 recovery. It reuses the stock recovery kernel, DTB,
 second-stage payload and recovery DTBO. Only the TWRP ramdisk and userspace
 Rockchip E-Ink backend are rebuilt.
 
-The generated image is **not verified on hardware**. A successful CI build is
-not evidence that display, touch, mounting or reboot behavior is safe. Keep a
-Loader-mode recovery route and the stock recovery image available before any
-flash test.
+An earlier build reached the TWRP UI on hardware, but ADB, touch coordinates
+and reboot-to-system were not yet correct. Keep a Loader-mode recovery route
+and the stock recovery image available before every flash test.
+
+The device-specific init file only supplies the Rockchip DWC3 controller and
+the gadget parameters copied from stock recovery. The common TWRP `init.rc`
+owns adbd, FunctionFS and the configfs USB state machine; duplicating its
+`none -> adb` transition in the board file can race FunctionFS attachment.
+
+The build also moves TWRP's existing one-shot BCB clear before graphics
+initialization. This does not change the misc offsets or introduce a second
+BCB implementation; it ensures a failed first E-Ink update cannot leave the
+device permanently requesting recovery. E-Ink mode 7 is retained because it
+is the mode of the build that reached the UI; mode 13 caused a boot-logo hang.
 
 Offline disassembly of the stock firmware 1.00.84
 `libbootloader_message.so` confirms the standard Android 11 misc layout: the
