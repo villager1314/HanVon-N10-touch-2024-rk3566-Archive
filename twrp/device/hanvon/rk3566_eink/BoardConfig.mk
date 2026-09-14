@@ -50,13 +50,6 @@ TWRP_EVENT_LOGGING := true
 TW_NO_SCREEN_BLANK := true
 TW_MAX_BRIGHTNESS := 1023
 
-# TWRP enables MTP after startup by switching sys.usb.config from adb to
-# mtp,adb.  This Rockchip recovery uses configfs, while the available MTP
-# actions target the legacy android_usb gadget and leave both MTP and ADB
-# detached.  Keep an adb-only FunctionFS gadget until a native configfs MTP
-# implementation is available.
-TW_EXCLUDE_MTP := true
-
 # This build adds a Rockchip /dev/ebc backend to minuitwrp. The stock kernel
 # and DTB are deliberately reused; no experimental kernel is compiled here.
 TW_HAS_ROCKCHIP_EBC := true
